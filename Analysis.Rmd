@@ -1,0 +1,26 @@
+---
+title: "Baltic Food Network Analysis"
+author: "Filipp Shelobolin, Jason Xu, Jae Hyung Kang"
+date: "10/8/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+The dataset network, representing the food web of the Flensburg Fjord in the Baltic Sea, consists of 180 nodes and 1577 directed edges ("realized links"). Each node mainly corresponds to a single species, with some nodes representing functional or taxonomic groups, and some nodes corresponding to parasites with complex life cycles coded appropriately. Each link defines an interaction type between nodes with endpoints consumer and resource, with interaction types being for example predation, decomposition (detritivores) and different forms of parasitism. The data were collected with field sampling and supplemented with additional published sources and local knowledge. 
+
+The dataset was published in the journal Ecology in 2011 and is available online at http://esapubs.org/archive/ecol/E092/174/default.htm. The dataset was used in further papers on food webs and parasitism, for example in a 2013 paper in PLOS Biology about parasites increasing diversity in food webs (https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001579). 
+
+# Research Questions
+
+Our dataset has extensive metadata, which opens many possible research questions. With this project, we hope to answer the following:
+
+\begin{enumerate}
+  \item Do parasites have a higher resource density (more outgoing edges) than other taxonomies?
+  \item Are younger organisms more likely to be a resources than older organisms?
+  \item Does the existence of any specific taxonomy significantly decrease average path length between nodes?
+\end{enumerate}

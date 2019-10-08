@@ -59,13 +59,15 @@ E(G.stageID)$weight = df.stageID$count
 # color nodes by species
 plot(G.nodeID, vertex.size = 6, vertex.label.cex = 0.5, edge.arrow.size = 0.1, 
      vertex.color = node.dta$`Species ID`,
-            main = "Consumer/Resource Graph of Nodes colored by Species ID")
+     edge.color = factor(link.dta$LinkType),
+            main = "Consumer/Resource Graph of Nodes colored by Species ID and Link Type")
 # color nodes by lifecycle stage
 stage.length <- length(levels(node.dta$`Stage ID`))
 pal <- brewer_pal("div")(stage.length)
 plot(G.nodeID, vertex.size = 6, vertex.label.cex = 0.5, edge.arrow.size = 0.1,
      vertex.color = pal[node.dta$`Stage ID`],
-            main = "Consumer/Resource Graph of Nodes colored by stage ID")
+            main = "Consumer/Resource Graph of Nodes colored by stage ID and Link Type",
+     edge.color = factor(link.dta$LinkType))
 legend("topright", title = "Stage", 
        legend = levels(node.dta$`Stage ID`),
        fill = pal
