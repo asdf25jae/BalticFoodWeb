@@ -1,0 +1,28 @@
+---
+title: "Baltic Food Web"
+author: "Filipp Shelobolin, Jason Xu, Jae Hyung Kang"
+date: "10/8/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Load libraries / set seed
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(RCurl)
+set.seed(101)
+```
+
+## Load Data
+
+```{r}
+download <- getURL("http://esapubs.org/archive/ecol/E092/174/Flensburg_Data_Links.csv")
+dta <- read_csv(download)
+m <- dta %>% select(ConsumerNodeID,ResourceNodeID) %>% as.matrix(ncol = 2)
+G <- m %>% graph_from_edgelist()
+```

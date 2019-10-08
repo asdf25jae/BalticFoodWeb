@@ -1,6 +1,0 @@
-library(tidyverse)
-library(igraph)
-dta <- read_csv("Flensburg_Data_Links.csv")
-dim(dta)
-m <- dta %>% select(ConsumerNodeID,ResourceNodeID) %>% as.matrix(ncol = 2)
-G <- m %>% graph_from_edgelist()
