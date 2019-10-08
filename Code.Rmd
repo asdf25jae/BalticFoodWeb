@@ -15,14 +15,77 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(igraph)
 library(RCurl)
+library(scales)
 set.seed(101)
 ```
 
 ## Load Data
 
 ```{r}
-download <- getURL("http://esapubs.org/archive/ecol/E092/174/Flensburg_Data_Links.csv")
-dta <- read_csv(download)
-m <- dta %>% select(ConsumerNodeID,ResourceNodeID) %>% as.matrix(ncol = 2)
-G <- m %>% graph_from_edgelist()
+link.dta <- read_csv("./Flensburg_Data_Links.csv")
+node.dta <- read_csv("./Flensburg_Data_Nodes.csv") %>% mutate(`Stage ID` = factor(`Stage ID`)) %>% arrange(`Node ID`)
+length(unique(node.dta$`Node ID`)) # 180 nodes
+# create graph by node ID
+m.nodeID <- link.dta %>% select(ConsumerNodeID,ResourceNodeID) %>% as.matrix(ncol = 2)
+nrow(m) # 1577 edges
+G.nodeID <- m.nodeID %>% graph_from_edgelist()
+# graph by species ID
+df.speciesID <- link.dta %>% 
+  select(ConsumerSpeciesID, ResourceSpeciesID) %>% 
+  group_by(ConsumerSpeciesID, ResourceSpeciesID) %>%
+  summarize(count = n())
+m.speciesID <- df.speciesID %>%
+  select(ConsumerSpeciesID, ResourceSpeciesID) %>%
+  as.matrix(ncol = 2)
+G.speciesID <- m.speciesID %>% graph_from_edgelist()
+E(G.speciesID)$weight = df.speciesID$count
+# graph by stage ID
+df.stageID <- link.dta %>% 
+  select(ConsumerStageID, ResourceStageID) %>% 
+  group_by(ConsumerStageID, ResourceStageID) %>%
+  summarize(count = n())
+m.stageID <- df.stageID %>%
+  select(ConsumerStageID, ResourceStageID) %>%
+  as.matrix(ncol = 2)
+G.stageID <- m.stageID %>% graph_from_edgelist()
+E(G.stageID)$weight = df.stageID$count
+```
+
+## Plots
+
+### Plots by nodeID
+
+```{r}
+# color nodes by species
+plot(G.nodeID, vertex.size = 6, vertex.label.cex = 0.5, edge.arrow.size = 0.1, 
+     vertex.color = node.dta$`Species ID`,
+            main = "Consumer/Resource Graph of Nodes colored by Species ID")
+# color nodes by lifecycle stage
+stage.length <- length(levels(node.dta$`Stage ID`))
+pal <- brewer_pal("div")(stage.length)
+plot(G.nodeID, vertex.size = 6, vertex.label.cex = 0.5, edge.arrow.size = 0.1,
+     vertex.color = pal[node.dta$`Stage ID`],
+            main = "Consumer/Resource Graph of Nodes colored by stage ID")
+legend("topright", title = "Stage", 
+       legend = levels(node.dta$`Stage ID`),
+       fill = pal
+       )
+```
+
+### Plots by Species ID
+
+```{r}
+plot(G.speciesID, vertex.size = 6, vertex.label.cex = 0.5, edge.arrow.size = 0.1,
+     edge.width = E(G.speciesID)$weight*1.5,
+     edge.curved = TRUE,
+     main = "Consumer/Resource Graph of Species")
+```
+
+### Plots by Stage ID
+
+```{r}
+plot(G.stageID, vertex.size = 12, vertex.label.cex = 1, edge.arrow.size = 0.5,
+     edge.width = E(G.stageID)$weight/100,
+     edge.curved = TRUE,
+     main = "Consumer/Resource Graph of Stage")
 ```
